@@ -6,8 +6,14 @@ from django.contrib.auth import authenticate, login
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from .serializers import ContactFormSerializer, AppointmentFormSerializer, UserSerializer
-from .models import ContactForm, AppointmentForm
+from .serializers import (
+    ContactFormSerializer,
+    AppointmentFormSerializer,
+    UserSerializer,
+    ServiceSerializer,
+    TeamMemberSerializer,
+)
+from .models import ContactForm, AppointmentForm, Service, TeamMember
 from django.middleware.csrf import get_token
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -15,6 +21,7 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 @method_decorator(csrf_exempt, name='dispatch')
 class LoginAPI(APIView):
@@ -101,6 +108,110 @@ class AppointmentFormAPI(APIView):
         appointments = AppointmentForm.objects.all().order_by('-preferredDate', 'preferredTime')
         serializer = AppointmentFormSerializer(appointments, many=True)
         return Response(serializer.data)
+
+
+class ServiceListCreateAPI(APIView):
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get(self, request):
+        services = Service.objects.all()
+        serializer = ServiceSerializer(services, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    def post(self, request):
+        if not request.user.is_authenticated or not request.user.is_staff:
+            return Response({"message": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = ServiceSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ServiceDetailAPI(APIView):
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def put(self, request, service_id):
+        if not request.user.is_authenticated or not request.user.is_staff:
+            return Response({"message": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            service = Service.objects.get(id=service_id)
+        except Service.DoesNotExist:
+            return Response({"message": "Service not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ServiceSerializer(service, data=request.data, partial=True, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, service_id):
+        if not request.user.is_authenticated or not request.user.is_staff:
+            return Response({"message": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            service = Service.objects.get(id=service_id)
+        except Service.DoesNotExist:
+            return Response({"message": "Service not found"}, status=status.HTTP_404_NOT_FOUND)
+        service.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TeamListCreateAPI(APIView):
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get(self, request):
+        members = TeamMember.objects.all()
+        serializer = TeamMemberSerializer(members, many=True, context={"request": request})
+        return Response(serializer.data)
+
+    def post(self, request):
+        if not request.user.is_authenticated or not request.user.is_staff:
+            return Response({"message": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = TeamMemberSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TeamDetailAPI(APIView):
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def put(self, request, team_id):
+        if not request.user.is_authenticated or not request.user.is_staff:
+            return Response({"message": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            member = TeamMember.objects.get(id=team_id)
+        except TeamMember.DoesNotExist:
+            return Response({"message": "Team member not found"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = TeamMemberSerializer(member, data=request.data, partial=True, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, team_id):
+        if not request.user.is_authenticated or not request.user.is_staff:
+            return Response({"message": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            member = TeamMember.objects.get(id=team_id)
+        except TeamMember.DoesNotExist:
+            return Response({"message": "Team member not found"}, status=status.HTTP_404_NOT_FOUND)
+        member.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET'])
+def featured_services(request):
+    services = Service.objects.filter(is_featured=True)
+    serializer = ServiceSerializer(services, many=True, context={"request": request})
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def featured_team(request):
+    members = TeamMember.objects.filter(is_featured=True)
+    serializer = TeamMemberSerializer(members, many=True, context={"request": request})
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['PATCH'])
 def update_appointment_status(request, appointment_id):

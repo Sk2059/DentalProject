@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -15,25 +18,24 @@ const Footer = () => {
               </div>
               <div>
                 <h3 className="text-xl font-bold">Sayapatri</h3>
-                <p className="text-sm opacity-80">Dental Hospital</p>
+                <p className="text-sm opacity-80">{t('nav.hospital')}</p>
               </div>
             </div>
             <p className="text-sm opacity-80 leading-relaxed">
-              Providing exceptional dental care with advanced technology and compassionate service. 
-              Your smile is our priority.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold">Quick Links</h4>
+            <h4 className="text-lg font-semibold">{t('footer.quickLinks')}</h4>
             <ul className="space-y-2">
               {[
-                { name: 'Home', path: '/' },
-                { name: 'Services', path: '/services' },
-                { name: 'About Us', path: '/about' },
-                { name: 'Contact', path: '/contact' },
-                { name: 'Appointment', path: '/appointment' },
+                { name: t('nav.home'), path: '/' },
+                { name: t('nav.services'), path: '/services' },
+                { name: t('footer.aboutUs'), path: '/about' },
+                { name: t('nav.contact'), path: '/contact' },
+                { name: t('footer.appointment'), path: '/appointment' },
               ].map((link) => (
                 <li key={link.name}>
                   <Link
@@ -49,7 +51,7 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold">Contact Info</h4>
+            <h4 className="text-lg font-semibold">{t('footer.contactInfo')}</h4>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="w-4 h-4" />
@@ -61,18 +63,18 @@ const Footer = () => {
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin className="w-4 h-4 mt-1" />
-                <span className="text-sm">New Road, Kathmandu, Nepal</span>
+                <span className="text-sm">{t('footer.address')}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Clock className="w-4 h-4" />
-                <span className="text-sm">Mon-Sat: 9AM-6PM</span>
+                <span className="text-sm">{t('topbar.hours')}</span>
               </div>
             </div>
           </div>
 
           {/* Social Media */}
           <div className="space-y-4">
-            <h4 className="text-lg font-semibold">Follow Us</h4>
+            <h4 className="text-lg font-semibold">{t('footer.followUs')}</h4>
             <div className="flex space-x-4">
               <a
                 href="#"
@@ -100,20 +102,20 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-primary-foreground/20">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm opacity-80">
-              © 2024 Sayapatri Dental Hospital. All rights reserved.
+              {t('footer.copyright')}
             </p>
             <div className="flex space-x-4 mt-4 md:mt-0">
               <a href="#" className="text-sm opacity-80 hover:opacity-100 transition-opacity duration-300">
-                Privacy Policy
+                {t('footer.privacy')}
               </a>
               <a href="#" className="text-sm opacity-80 hover:opacity-100 transition-opacity duration-300">
-                Terms of Service
+                {t('footer.terms')}
               </a>
               <Link 
                 to="/admin-login" 
                 className="text-sm opacity-80 hover:opacity-100 transition-opacity duration-300 hover:underline"
               >
-                Admin
+                {t('footer.admin')}
               </Link>
             </div>
           </div>

@@ -3,8 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Award, Users, Clock, Heart } from 'lucide-react';
 import Layout from '@/components/Layout';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const About = () => {
+  const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
   
   const team = [
@@ -50,28 +52,9 @@ const About = () => {
     }
   ];
 
-  const values = [
-    {
-      icon: Heart,
-      title: "Patient-Centered Care",
-      description: "We put our patients first, ensuring comfort and satisfaction in every treatment."
-    },
-    {
-      icon: Award,
-      title: "Excellence in Treatment",
-      description: "Committed to providing the highest quality dental care with proven results."
-    },
-    {
-      icon: Users,
-      title: "Expert Team",
-      description: "Our team of specialists brings years of experience and continuous learning."
-    },
-    {
-      icon: Clock,
-      title: "Timely Service",
-      description: "Respecting your time with efficient scheduling and prompt care delivery."
-    }
-  ];
+  const values = t('aboutPage.values', { returnObjects: true }) as { title: string; description: string }[];
+  const valueIcons = [Heart, Award, Users, Clock];
+  const timelineEvents = t('aboutPage.journeyEvents', { returnObjects: true }) as string[];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -88,21 +71,19 @@ const About = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 animate-fade-in">
               <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-                About Sayapatri Dental Hospital
+                {t('aboutPage.title')}
               </h1>
               <p className="text-xl text-muted-foreground leading-relaxed">
-                Established in 2009, Sayapatri Dental Hospital has been at the forefront of 
-                dental care in Nepal. We combine traditional values with modern technology 
-                to provide exceptional dental services.
+                {t('aboutPage.description')}
               </p>
               <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-primary">15+</div>
-                  <div className="text-sm text-muted-foreground">Years of Excellence</div>
+                  <div className="text-sm text-muted-foreground">{t('aboutPage.yearsExcellence')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-primary">5000+</div>
-                  <div className="text-sm text-muted-foreground">Happy Patients</div>
+                  <div className="text-sm text-muted-foreground">{t('aboutPage.happyPatients')}</div>
                 </div>
               </div>
             </div>
@@ -123,26 +104,22 @@ const About = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <Card className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader>
-                <CardTitle className="text-2xl text-primary">Our Mission</CardTitle>
+                <CardTitle className="text-2xl text-primary">{t('aboutPage.missionTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base leading-relaxed">
-                  To provide comprehensive, high-quality dental care in a comfortable and caring environment. 
-                  We are committed to helping our patients achieve and maintain optimal oral health through 
-                  prevention, education, and treatment excellence.
+                  {t('aboutPage.missionDesc')}
                 </CardDescription>
               </CardContent>
             </Card>
 
             <Card className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader>
-                <CardTitle className="text-2xl text-primary">Our Vision</CardTitle>
+                <CardTitle className="text-2xl text-primary">{t('aboutPage.visionTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base leading-relaxed">
-                  To be the leading dental care provider in Nepal, recognized for our commitment to patient 
-                  satisfaction, clinical excellence, and innovative treatment approaches. We envision a 
-                  community where everyone has access to quality dental care.
+                  {t('aboutPage.visionDesc')}
                 </CardDescription>
               </CardContent>
             </Card>
@@ -154,14 +131,16 @@ const About = () => {
       <section className="py-20 bg-accent/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">Our Values</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">{t('aboutPage.valuesTitle')}</h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              These core values guide everything we do at Sayapatri Dental Hospital
+              {t('aboutPage.valuesDesc')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
+            {values.map((value, index) => {
+              const ValueIcon = valueIcons[index];
+              return (
               <Card
                 key={index}
                 className="text-center hover:shadow-lg transition-all duration-300 hover:scale-105 animate-fade-in"
@@ -169,7 +148,7 @@ const About = () => {
               >
                 <CardHeader>
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <value.icon className="w-8 h-8 text-primary" />
+                    {ValueIcon ? <ValueIcon className="w-8 h-8 text-primary" /> : null}
                   </div>
                   <CardTitle className="text-xl">{value.title}</CardTitle>
                 </CardHeader>
@@ -179,7 +158,7 @@ const About = () => {
                   </CardDescription>
                 </CardContent>
               </Card>
-            ))}
+            )})}
           </div>
         </div>
       </section>
@@ -194,9 +173,9 @@ const About = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="text-3xl md:text-4xl font-bold text-foreground bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
+                className="text-3xl md:text-4xl font-bold  bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
               >
-                Our Journey
+                {t('aboutPage.journeyTitle')}
               </motion.h2>
               <motion.p 
                 initial={{ opacity: 0, y: 20 }}
@@ -205,19 +184,12 @@ const About = () => {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="text-xl text-muted-foreground"
               >
-                Milestones in our commitment to dental excellence
+                {t('aboutPage.journeyDesc')}
               </motion.p>
             </div>
 
             <div className="relative space-y-16">
-              {[
-                { year: "2009", event: "Sayapatri Dental Hospital was founded with a vision to provide quality dental care" },
-                { year: "2012", event: "Expanded services to include advanced orthodontic treatments" },
-                { year: "2015", event: "Introduced digital imaging and CAD/CAM technology" },
-                { year: "2018", event: "Opened pediatric dentistry department" },
-                { year: "2021", event: "Achieved 5000+ successful treatments milestone" },
-                { year: "2024", event: "Continuing to serve the community with excellence and innovation" }
-              ].map((milestone, index) => (
+              {["2009", "2012", "2015", "2018", "2021", "2024"].map((year, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
@@ -234,7 +206,7 @@ const About = () => {
                       className="w-12 h-12 md:w-28 md:h-28 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center text-primary-foreground font-bold text-sm md:text-xl flex-shrink-0 shadow-[0_8px_20px_-3px_rgba(0,0,0,0.3)] transition-all duration-300 z-10 relative"
                     >
                       <div className="absolute inset-1 rounded-full bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      {milestone.year}
+                      {year}
                     </motion.div>
                     <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-110"></div>
                   </div>
@@ -248,7 +220,7 @@ const About = () => {
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-primary/10 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>
                       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent transform origin-left transition-transform duration-500 scale-x-0 group-hover/card:scale-x-100"></div>
                       <div className="absolute bottom-0 right-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/40 to-transparent transform origin-right transition-transform duration-500 scale-x-0 group-hover/card:scale-x-100"></div>
-                      <p className="text-lg text-foreground relative">{milestone.event}</p>
+                      <p className="text-lg text-foreground relative">{timelineEvents[index]}</p>
                     </motion.div>
                   </div>
                 </motion.div>
@@ -262,10 +234,10 @@ const About = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-2 mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              Meet Our Expert Team
+              {t('aboutPage.teamTitle')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our team of experienced dental professionals is dedicated to providing you with the best care
+              {t('aboutPage.teamDesc')}
             </p>
           </div>
 
@@ -308,11 +280,11 @@ const About = () => {
                         </p>
                         <div className="space-y-2">
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm text-muted-foreground">Specialization:</span>
+                            <span className="text-sm text-muted-foreground">{t('aboutPage.specialization')}</span>
                             <span className="text-sm font-medium">{team[currentSlide].specialization}</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm text-muted-foreground">Experience:</span>
+                            <span className="text-sm text-muted-foreground">{t('aboutPage.experience')}</span>
                             <span className="text-sm font-medium">{team[currentSlide].experience}</span>
                           </div>
                           <p className="text-sm text-muted-foreground mt-2">

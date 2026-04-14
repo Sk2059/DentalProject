@@ -38,6 +38,40 @@ class AppointmentForm(models.Model):
 
     class Meta:
         ordering = ['-preferredDate', 'preferredTime']  # Sort by date (newest first) and then time
- 
-    
-    
+
+
+class Service(models.Model):
+    name = models.CharField(max_length=120)
+    description = models.TextField()
+    icon = models.CharField(max_length=30, default="🦷")
+    price = models.CharField(max_length=100)
+    image = models.ImageField(upload_to="services/", null=True, blank=True)
+    is_featured = models.BooleanField(default=False)
+    display_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["display_order", "-created_at"]
+
+
+class TeamMember(models.Model):
+    name = models.CharField(max_length=120)
+    role = models.CharField(max_length=120)
+    bio = models.TextField()
+    experience = models.CharField(max_length=60, blank=True)
+    specialization = models.CharField(max_length=150, blank=True)
+    image = models.ImageField(upload_to="team/", null=True, blank=True)
+    is_featured = models.BooleanField(default=False)
+    display_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["display_order", "-created_at"]

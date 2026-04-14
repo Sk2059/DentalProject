@@ -11,7 +11,13 @@ from .views import (
     update_user,
     delete_user,
     delete_appointment,
-    delete_message
+    delete_message,
+    ServiceListCreateAPI,
+    ServiceDetailAPI,
+    TeamListCreateAPI,
+    TeamDetailAPI,
+    featured_services,
+    featured_team,
 )
 
 urlpatterns = [
@@ -29,4 +35,10 @@ urlpatterns = [
     path('users/<int:user_id>/', update_user, name='update_user'),
     path('users/<int:user_id>/delete/', delete_user, name='delete_user'),
     path('data/', get_dental_data, name='get_dental_data'),
+    path('services/', ServiceListCreateAPI.as_view(), name='services'),
+    path('services/featured/', featured_services, name='featured_services'),
+    path('services/<int:service_id>/', ServiceDetailAPI.as_view(), name='service_detail'),
+    path('team/', TeamListCreateAPI.as_view(), name='team'),
+    path('team/featured/', featured_team, name='featured_team'),
+    path('team/<int:team_id>/', TeamDetailAPI.as_view(), name='team_detail'),
 ]
